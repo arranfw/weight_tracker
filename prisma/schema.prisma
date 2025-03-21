@@ -23,6 +23,7 @@ model User {
   sessions      Session[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
+  weightRecords WeightRecord[]
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -81,5 +82,16 @@ model Authenticator {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   @@id([userId, credentialID])
+}
+
+model WeightRecord {
+  id        String   @id @default(cuid())
+  weight    Float
+  date      DateTime
+  notes     String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 

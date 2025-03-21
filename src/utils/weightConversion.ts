@@ -13,13 +13,6 @@ export function lbsToKg(lbs: number): number {
 }
 
 /**
- * Format weight with the given unit
- */
-export function formatWeight(weight: number, unit: string): string {
-  return `${weight.toFixed(1)} ${unit}`;
-}
-
-/**
  * Convert weight between units
  */
 export function convertWeight(weight: number, fromUnit: string, toUnit: string): number {

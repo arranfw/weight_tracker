@@ -2,20 +2,18 @@
 
 import { format } from 'date-fns';
 import { deleteWeightRecord } from '@/actions/weight';
+import { useWeightUnit } from '@/contexts/WeightUnitContext';
+import { convertWeight } from '@/utils/weightConversion';
+import { WeightRecord } from '@prisma/client';
 
-type WeightRecord = {
-  id: string;
-  weight: number;
-  unit?: string;
-  date: string;
-  notes?: string;
-};
 
 interface WeightTableProps {
   weightRecords: WeightRecord[];
 }
 
 export default function WeightTable({ weightRecords }: WeightTableProps) {
+  const { preferredUnit } = useWeightUnit();
+  
   if (weightRecords.length === 0) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md">
@@ -29,6 +27,16 @@ export default function WeightTable({ weightRecords }: WeightTableProps) {
     if (confirm('Are you sure you want to delete this record?')) {
       await deleteWeightRecord(id);
     }
+  }
+
+  function displayWeight(record: WeightRecord) {
+    // Convert weight to preferred unit if needed
+    const recordUnit = record.unit || 'kg';
+    if (recordUnit !== preferredUnit) {
+      const convertedWeight = convertWeight(record.weight, recordUnit, preferredUnit);
+      return `${convertedWeight.toFixed(1)} ${preferredUnit}`;
+    }
+    return `${record.weight} ${recordUnit}`;
   }
 
   return (
@@ -54,7 +62,7 @@ export default function WeightTable({ weightRecords }: WeightTableProps) {
                     {format(new Date(record.date), 'MMM d, yyyy')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {record.weight} {record.unit || 'kg'}
+                    {displayWeight(record)}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
                     {record.notes || '-'}

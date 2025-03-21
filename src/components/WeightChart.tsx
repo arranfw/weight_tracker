@@ -13,6 +13,9 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { format } from 'date-fns';
+import { useWeightUnit } from '@/contexts/WeightUnitContext';
+import { convertWeight } from '@/utils/weightConversion';
+import { WeightRecord } from '@prisma/client';
 
 // Register ChartJS components
 ChartJS.register(
@@ -25,32 +28,36 @@ ChartJS.register(
   Legend
 );
 
-type WeightRecord = {
-  id: string;
-  weight: number;
-  date: string;
-  notes?: string;
-};
 
 interface WeightChartProps {
   weightRecords: WeightRecord[];
 }
 
 export default function WeightChart({ weightRecords }: WeightChartProps) {
+  const { preferredUnit } = useWeightUnit();
+  
   // Sort records by date
   const sortedRecords = [...weightRecords].sort((a, b) => {
     return new Date(a.date).getTime() - new Date(b.date).getTime();
   });
 
+  // Convert weights to preferred unit
+  const convertedWeights = sortedRecords.map(record => {
+    const recordUnit = record.unit || 'kg';
+    if (recordUnit !== preferredUnit) {
+      return convertWeight(record.weight, recordUnit, preferredUnit);
+    }
+    return record.weight;
+  });
+
   const labels = sortedRecords.map((record) => format(new Date(record.date), 'MMM d'));
-  const weights = sortedRecords.map((record) => record.weight);
 
   const chartData = {
     labels,
     datasets: [
       {
-        label: 'Weight (kg)',
-        data: weights,
+        label: `Weight (${preferredUnit})`,
+        data: convertedWeights,
         borderColor: 'rgb(79, 70, 229)',
         backgroundColor: 'rgba(79, 70, 229, 0.5)',
         tension: 0.1,
@@ -71,7 +78,7 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
       tooltip: {
         callbacks: {
           label: function(context: any) {
-            return `Weight: ${context.parsed.y} kg`;
+            return `Weight: ${context.parsed.y.toFixed(1)} ${preferredUnit}`;
           },
           afterLabel: function(context: any) {
             const recordIndex = context.dataIndex;
@@ -85,9 +92,9 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
       y: {
         title: {
           display: true,
-          text: 'Weight (kg)',
+          text: `Weight (${preferredUnit})`,
         },
-        min: Math.floor(Math.min(...weights) * 0.95),
+        min: Math.floor(Math.min(...convertedWeights) * 0.95),
       },
     },
   };

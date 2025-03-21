@@ -1,19 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { addWeightRecord } from '@/actions/weight';
+import { useWeightUnit } from '@/contexts/WeightUnitContext';
 
 export default function WeightForm() {
+  const { preferredUnit } = useWeightUnit();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
-  const [unit, setUnit] = useState<'kg' | 'lbs'>('kg');
 
   async function handleSubmit(formData: FormData) {
     setError(null);
     setSuccess(false);
     
-    // Add the unit to the form data
-    formData.append('unit', unit);
+    // Add the user's preferred unit to the form data
+    formData.append('unit', preferredUnit);
     
     try {
       await addWeightRecord(formData);
@@ -46,7 +47,7 @@ export default function WeightForm() {
       <form id="weight-form" action={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="weight" className="block text-sm font-medium text-gray-700">
-            Weight
+            Weight ({preferredUnit})
           </label>
           <div className="mt-1 flex rounded-md shadow-sm">
             <input
@@ -55,32 +56,9 @@ export default function WeightForm() {
               name="weight"
               step="0.1"
               required
-              className="flex-grow block w-full px-3 py-2 border border-gray-300 rounded-l-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="flex-grow block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              aria-label={`Weight in ${preferredUnit}`}
             />
-            <div className="inline-flex">
-              <button
-                type="button"
-                onClick={() => setUnit('kg')}
-                className={`px-4 py-2 border border-l-0 ${
-                  unit === 'kg' 
-                    ? 'bg-indigo-600 text-white' 
-                    : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                kg
-              </button>
-              <button
-                type="button"
-                onClick={() => setUnit('lbs')}
-                className={`px-4 py-2 border border-l-0 rounded-r-md ${
-                  unit === 'lbs' 
-                    ? 'bg-indigo-600 text-white' 
-                    : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                lbs
-              </button>
-            </div>
           </div>
         </div>
         

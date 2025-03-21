@@ -14,16 +14,17 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String          @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id                 String          @id @default(cuid())
+  name               String?
+  email              String          @unique
+  emailVerified      DateTime?
+  image              String?
+  accounts           Account[]
+  sessions           Session[]
   // Optional for WebAuthn support
-  Authenticator Authenticator[]
-  weightRecords WeightRecord[]
+  Authenticator      Authenticator[]
+  weightRecords      WeightRecord[]
+  preference         UserPreference?
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -92,6 +93,16 @@ model WeightRecord {
   notes     String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UserPreference {
+  id                String @id @default(cuid())
+  userId            String @unique
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  preferredWeightUnit String @default("kg")
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

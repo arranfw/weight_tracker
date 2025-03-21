@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { auth } from '@/auth';
 import Link from 'next/link';
+import WeightUnitSelector from '@/components/WeightUnitSelector';
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await auth();
@@ -34,7 +35,14 @@ export default async function DashboardLayout({ children }: { children: ReactNod
         </div>
       </nav>
       
-      <main>{children}</main>
+      <main>
+        {session?.user && (
+          <div className="container mx-auto px-4 py-3 flex justify-end">
+            <WeightUnitSelector />
+          </div>
+        )}
+        {children}
+      </main>
     </div>
   );
 } 

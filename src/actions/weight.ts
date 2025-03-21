@@ -81,4 +81,26 @@ export async function deleteWeightRecord(id: string) {
     console.error("Error deleting weight record:", error);
     throw new Error("Failed to delete weight record");
   }
+}
+
+export async function getLatestWeightRecord() {
+  const session = await auth();
+  
+  if (!session?.user?.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const userId = session.user.id;
+  
+  try {
+    const latestRecord = await prisma.weightRecord.findFirst({
+      where: { userId },
+      orderBy: { date: "desc" },
+    });
+    
+    return latestRecord;
+  } catch (error) {
+    console.error("Error fetching latest weight record:", error);
+    throw new Error("Failed to fetch latest weight record");
+  }
 } 

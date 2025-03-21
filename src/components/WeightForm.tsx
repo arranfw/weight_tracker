@@ -1,13 +1,40 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { addWeightRecord } from '@/actions/weight';
+import { addWeightRecord, getLatestWeightRecord } from '@/actions/weight';
 import { useWeightUnit } from '@/contexts/WeightUnitContext';
+import { convertWeight } from '@/utils/weightConversion';
 
 export default function WeightForm() {
   const { preferredUnit } = useWeightUnit();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
+  const [lastWeight, setLastWeight] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch the last weight record on component mount
+  useEffect(() => {
+    async function fetchLastWeight() {
+      try {
+        const record = await getLatestWeightRecord();
+        if (record) {
+          // Convert if necessary
+          if (record.unit && record.unit !== preferredUnit) {
+            const converted = convertWeight(record.weight, record.unit, preferredUnit);
+            setLastWeight(converted);
+          } else {
+            setLastWeight(record.weight);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching last weight:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchLastWeight();
+  }, [preferredUnit]);
 
   async function handleSubmit(formData: FormData) {
     setError(null);
@@ -18,11 +45,24 @@ export default function WeightForm() {
     
     try {
       await addWeightRecord(formData);
+      
+      // Update the last weight value with the new submission
+      const newWeight = parseFloat(formData.get('weight') as string);
+      if (!isNaN(newWeight)) {
+        setLastWeight(newWeight);
+      }
+      
       setSuccess(true);
       
-      // Reset the form
+      // Reset the form but keep the weight value
       const form = document.getElementById('weight-form') as HTMLFormElement;
       form.reset();
+      
+      // Re-set the weight value
+      const weightInput = form.elements.namedItem('weight') as HTMLInputElement;
+      if (weightInput && newWeight) {
+        weightInput.value = newWeight.toString();
+      }
     } catch (err: any) {
       setError(err.message || 'Something went wrong');
     }
@@ -56,6 +96,8 @@ export default function WeightForm() {
               name="weight"
               step="0.1"
               required
+              defaultValue={lastWeight !== null ? lastWeight.toFixed(1) : ''}
+              placeholder={isLoading ? "Loading..." : "Enter weight"}
               className="flex-grow block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               aria-label={`Weight in ${preferredUnit}`}
             />

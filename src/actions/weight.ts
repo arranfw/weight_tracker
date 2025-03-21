@@ -3,6 +3,8 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { LocalDateTime } from '@js-joda/core';
+import { dateTimeToJsDate, parseISOToDateTime, now } from '@/utils/dateUtils';
 
 export async function getWeightRecords() {
   const session = await auth();
@@ -36,7 +38,7 @@ export async function addWeightRecord(formData: FormData) {
   const userId = session.user.id;
   const weight = parseFloat(formData.get('weight') as string);
   const notes = formData.get('notes') as string;
-  const dateStr = formData.get('date') as string;
+  const dateTimeStr = formData.get('date') as string;
   const unit = (formData.get('unit') as string) || 'kg';
   
   if (isNaN(weight) || weight <= 0) {
@@ -44,11 +46,19 @@ export async function addWeightRecord(formData: FormData) {
   }
   
   try {
+    // Parse the datetime string using js-joda
+    let localDateTime = dateTimeStr 
+      ? parseISOToDateTime(dateTimeStr)
+      : now();
+    
+    // Convert to a native Date for Prisma (which doesn't directly support js-joda)
+    const date = dateTimeToJsDate(localDateTime);
+    
     await prisma.weightRecord.create({
       data: {
         weight,
         unit,
-        date: dateStr ? new Date(dateStr) : new Date(),
+        date,
         notes: notes || undefined,
         userId,
       },

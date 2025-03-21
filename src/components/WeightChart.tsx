@@ -12,9 +12,9 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { format } from 'date-fns';
 import { useWeightUnit } from '@/contexts/WeightUnitContext';
 import { convertWeight } from '@/utils/weightConversion';
+import { formatDate, formatDateTime } from '@/utils/dateUtils';
 import { WeightRecord } from '@prisma/client';
 
 // Register ChartJS components
@@ -27,7 +27,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
 
 interface WeightChartProps {
   weightRecords: WeightRecord[];
@@ -50,7 +49,7 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
     return record.weight;
   });
 
-  const labels = sortedRecords.map((record) => format(new Date(record.date), 'MMM d'));
+  const labels = sortedRecords.map((record) => formatDate(new Date(record.date)));
 
   const chartData = {
     labels,
@@ -83,7 +82,17 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
           afterLabel: function(context: any) {
             const recordIndex = context.dataIndex;
             const record = sortedRecords[recordIndex];
-            return record.notes ? `Notes: ${record.notes}` : '';
+            let tooltipInfo = [];
+            
+            // Add date and time
+            tooltipInfo.push(`Date: ${formatDateTime(new Date(record.date))}`);
+            
+            // Add notes if available
+            if (record.notes) {
+              tooltipInfo.push(`Notes: ${record.notes}`);
+            }
+            
+            return tooltipInfo.join('\n');
           }
         }
       }

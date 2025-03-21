@@ -1,11 +1,10 @@
 'use client';
 
-import { format } from 'date-fns';
 import { deleteWeightRecord } from '@/actions/weight';
 import { useWeightUnit } from '@/contexts/WeightUnitContext';
 import { convertWeight } from '@/utils/weightConversion';
 import { WeightRecord } from '@prisma/client';
-
+import { formatDateTime } from '@/utils/dateUtils';
 
 interface WeightTableProps {
   weightRecords: WeightRecord[];
@@ -47,7 +46,7 @@ export default function WeightTable({ weightRecords }: WeightTableProps) {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Weight</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -59,7 +58,7 @@ export default function WeightTable({ weightRecords }: WeightTableProps) {
               .map((record) => (
                 <tr key={record.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {format(new Date(record.date), 'MMM d, yyyy')}
+                    {formatDateTime(new Date(record.date))}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {displayWeight(record)}

@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { addWeightRecord, getLatestWeightRecord } from '@/actions/weight';
 import { useWeightUnit } from '@/contexts/WeightUnitContext';
 import { convertWeight } from '@/utils/weightConversion';
+import { LocalDateTime } from '@js-joda/core';
+import { formatDateTimeForInput, now } from '@/utils/dateUtils';
 
 export default function WeightForm() {
   const { preferredUnit } = useWeightUnit();
@@ -63,6 +65,12 @@ export default function WeightForm() {
       if (weightInput && newWeight) {
         weightInput.value = newWeight.toString();
       }
+      
+      // Reset the datetime to current time
+      const dateInput = form.elements.namedItem('date') as HTMLInputElement;
+      if (dateInput) {
+        dateInput.value = formatDateTimeForInput(now());
+      }
     } catch (err: any) {
       setError(err.message || 'Something went wrong');
     }
@@ -106,13 +114,13 @@ export default function WeightForm() {
         
         <div>
           <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-            Date
+            Date and Time
           </label>
           <input
-            type="date"
+            type="datetime-local"
             id="date"
             name="date"
-            defaultValue={new Date().toISOString().split('T')[0]}
+            defaultValue={formatDateTimeForInput(now())}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>

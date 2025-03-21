@@ -18,6 +18,11 @@ export default async function DashboardPage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Weight Tracker Dashboard</h1>
       
+      <div className="mb-4 p-4 bg-yellow-100 rounded-md">
+        <p className="text-gray-700">User ID: {session.user.id}</p>
+        <p className="text-gray-700">Email: {session.user.email}</p>
+      </div>
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
           <WeightForm />

@@ -1,29 +1,47 @@
+import { signIn, signOut } from '@/auth';
+import { auth } from '@/lib/auth';
 import Link from 'next/link';
-import { auth } from '@/auth';
 
 export default async function Home() {
   const session = await auth();
+  
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-100 to-white">
       <div className="container mx-auto px-4 py-16">
         <header className="flex justify-between items-center mb-16">
           <h1 className="text-3xl font-bold text-indigo-600">Weight Tracker</h1>
-          <div>
+          <div className="flex items-center space-x-4">
             {session?.user ? (
-              <Link
-                href="/dashboard"
-                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
-              >
-                Go to Dashboard
-              </Link>
+              <>
+                <Link
+                  href="/dashboard"
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
+                >
+                  Dashboard
+                </Link>
+                <form
+      action={async () => {
+        "use server"
+        await signOut()
+      }}
+    >
+      <button type="submit"
+                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
+                >Sign Out</button>
+    </form>
+              </>
             ) : (
-              <Link
-                href="/api/auth/signin"
+              <form
+              action={async () => {
+                "use server"
+                await signIn("github")
+              }}
+            >
+              <button 
                 className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition"
-              >
-                Sign In
-              </Link>
+                type="submit">Signin with GitHub</button>
+            </form>
             )}
           </div>
         </header>
@@ -54,12 +72,14 @@ export default async function Home() {
             </div>
           </div>
           
-          <Link
-            href={session?.user ? "/dashboard" : "/api/auth/signin"}
-            className="bg-indigo-600 text-white px-8 py-3 rounded-md text-lg font-medium hover:bg-indigo-700 transition"
-          >
-            {session?.user ? "Go to Dashboard" : "Get Started for Free"}
-          </Link>
+          {!session?.user && (
+            <Link
+              href="/api/auth/signin/github"
+              className="bg-indigo-600 text-white px-8 py-3 rounded-md text-lg font-medium hover:bg-indigo-700 transition"
+            >
+              Get Started with GitHub
+            </Link>
+          )}
         </main>
       </div>
       

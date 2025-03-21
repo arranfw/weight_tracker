@@ -37,6 +37,7 @@ export async function addWeightRecord(formData: FormData) {
   const weight = parseFloat(formData.get('weight') as string);
   const notes = formData.get('notes') as string;
   const dateStr = formData.get('date') as string;
+  const unit = (formData.get('unit') as string) || 'kg';
   
   if (isNaN(weight) || weight <= 0) {
     throw new Error("Weight is required and must be a positive number");
@@ -46,6 +47,7 @@ export async function addWeightRecord(formData: FormData) {
     await prisma.weightRecord.create({
       data: {
         weight,
+        unit,
         date: dateStr ? new Date(dateStr) : new Date(),
         notes: notes || undefined,
         userId,

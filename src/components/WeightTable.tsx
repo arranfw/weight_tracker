@@ -6,6 +6,7 @@ import { deleteWeightRecord } from '@/actions/weight';
 type WeightRecord = {
   id: string;
   weight: number;
+  unit?: string;
   date: string;
   notes?: string;
 };
@@ -39,7 +40,7 @@ export default function WeightTable({ weightRecords }: WeightTableProps) {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Weight (kg)</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Weight</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
@@ -53,7 +54,7 @@ export default function WeightTable({ weightRecords }: WeightTableProps) {
                     {format(new Date(record.date), 'MMM d, yyyy')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {record.weight}
+                    {record.weight} {record.unit || 'kg'}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
                     {record.notes || '-'}

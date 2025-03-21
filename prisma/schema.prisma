@@ -87,6 +87,7 @@ model Authenticator {
 model WeightRecord {
   id        String   @id @default(cuid())
   weight    Float
+  unit      String   @default("kg")  // Can be "kg" or "lbs"
   date      DateTime
   notes     String?
   userId    String

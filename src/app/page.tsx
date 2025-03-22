@@ -6,7 +6,7 @@ export default async function Home() {
 	const session = await auth();
 
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-indigo-100 to-white">
+		<div className="min-h-screen bg-linear-to-b from-indigo-100 to-white">
 			<div className="container mx-auto px-4 py-16">
 				<header className="flex justify-between items-center mb-16">
 					<h1 className="text-3xl font-bold text-indigo-600">Weight Tracker</h1>

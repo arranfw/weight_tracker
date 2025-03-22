@@ -10,7 +10,7 @@ export default async function DashboardLayout({
 
 	return (
 		<div className="min-h-screen bg-gray-100">
-			<nav className="bg-white shadow-sm">
+			<nav className="bg-white shadow-xs">
 				<div className="container mx-auto px-4 py-3 flex justify-between items-center">
 					<Link href="/" className="font-semibold text-xl text-indigo-600">
 						Weight Tracker

@@ -104,7 +104,7 @@ export default function WeightForm() {
 					>
 						Weight ({preferredUnit})
 					</label>
-					<div className="mt-1 flex rounded-md shadow-sm">
+					<div className="mt-1 flex rounded-md shadow-xs">
 						<input
 							type="number"
 							id="weight"
@@ -113,7 +113,7 @@ export default function WeightForm() {
 							required
 							defaultValue={lastWeight !== null ? lastWeight.toFixed(1) : ""}
 							placeholder={isLoading ? "Loading..." : "Enter weight"}
-							className="flex-grow block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+							className="grow block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500"
 							aria-label={`Weight in ${preferredUnit}`}
 						/>
 					</div>
@@ -131,7 +131,7 @@ export default function WeightForm() {
 						id="date"
 						name="date"
 						defaultValue={formatDateTimeForInput(now())}
-						className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+						className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500"
 					/>
 				</div>
 
@@ -146,13 +146,13 @@ export default function WeightForm() {
 						id="notes"
 						name="notes"
 						rows={3}
-						className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+						className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-indigo-500 focus:border-indigo-500"
 					/>
 				</div>
 
 				<button
 					type="submit"
-					className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+					className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-xs text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 				>
 					Save Weight Record
 				</button>

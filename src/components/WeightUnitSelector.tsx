@@ -25,7 +25,7 @@ export default function WeightUnitSelector() {
 	return (
 		<div className="flex items-center space-x-3">
 			<span className="text-sm font-medium text-gray-700">Preferred unit:</span>
-			<div className="inline-flex rounded-md shadow-sm">
+			<div className="inline-flex rounded-md shadow-xs">
 				<button
 					type="button"
 					onClick={() => handleUnitChange("kg")}

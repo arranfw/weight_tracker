@@ -11,6 +11,9 @@
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.8.0",
+		"@fortawesome/fontawesome-svg-core": "^6.7.2",
+		"@fortawesome/free-solid-svg-icons": "^6.7.2",
+		"@fortawesome/react-fontawesome": "^0.2.2",
 		"@js-joda/core": "^5.6.4",
 		"@js-joda/locale_en": "^4.15.1",
 		"@js-joda/timezone": "^2.21.2",
@@ -22,7 +25,8 @@
 		"pg": "^8.14.1",
 		"react": "^19.0.0",
 		"react-chartjs-2": "^5.3.0",
-		"react-dom": "^19.0.0"
+		"react-dom": "^19.0.0",
+		"react-verification-input": "^4.2.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",

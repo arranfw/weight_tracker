@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --port 3000",
-    "build": "next build && prisma generate",
+    "build": "next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "biome lint --write .",
     "format": "biome format --write ."

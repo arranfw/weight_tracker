@@ -15,9 +15,9 @@ export default function WeightTable({ weightRecords }: WeightTableProps) {
 
   if (weightRecords.length === 0) {
     return (
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="bg-card p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">Weight Records</h2>
-        <p className="text-gray-500">No weight records found.</p>
+        <p className="">No weight records found.</p>
       </div>
     );
   }
@@ -43,28 +43,28 @@ export default function WeightTable({ weightRecords }: WeightTableProps) {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-card p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">Weight Records</h2>
 
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead>
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                 Date & Time
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                 Weight
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider">
                 Notes
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-card divide-y divide-gray-200">
             {weightRecords
               .sort(
                 (a, b) =>
@@ -72,13 +72,13 @@ export default function WeightTable({ weightRecords }: WeightTableProps) {
               )
               .map((record) => (
                 <tr key={record.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
                     {formatDateTime(new Date(record.date))}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm">
                     {displayWeight(record)}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                  <td className="px-6 py-4 text-sm  max-w-xs truncate">
                     {record.notes || "-"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

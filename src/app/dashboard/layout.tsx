@@ -9,8 +9,8 @@ export default async function DashboardLayout({
   const session = await auth();
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-white shadow-xs">
+    <div className="min-h-screen">
+      <nav className="bg-card shadow-xs">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <Link href="/" className="font-semibold text-xl text-indigo-600">
             Weight Tracker
@@ -19,7 +19,7 @@ export default async function DashboardLayout({
           <div className="flex items-center space-x-4">
             {session?.user ? (
               <div className="flex items-center space-x-4">
-                <div className="text-sm text-gray-700">
+                <div className="text-sm">
                   {session.user.name || session.user.email}
                 </div>
                 <form action="/api/auth/signout" method="POST">

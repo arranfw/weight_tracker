@@ -81,7 +81,7 @@ export default function WeightForm() {
   }
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-card p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">Add Weight Record</h2>
 
       {error && (
@@ -98,10 +98,7 @@ export default function WeightForm() {
 
       <form id="weight-form" action={handleSubmit} className="space-y-4">
         <div>
-          <label
-            htmlFor="weight"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="weight" className="block text-sm font-medium">
             Weight ({preferredUnit})
           </label>
           <div className="mt-1 flex rounded-md shadow-xs">
@@ -115,10 +112,7 @@ export default function WeightForm() {
         </div>
 
         <div>
-          <label
-            htmlFor="date"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="date" className="block text-sm font-medium">
             Date and Time
           </label>
           <input
@@ -131,10 +125,7 @@ export default function WeightForm() {
         </div>
 
         <div>
-          <label
-            htmlFor="notes"
-            className="block text-sm font-medium text-gray-700"
-          >
+          <label htmlFor="notes" className="block text-sm font-medium">
             Notes (optional)
           </label>
           <textarea

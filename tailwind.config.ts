@@ -21,6 +21,7 @@ const config: Config = {
         "connections-blue": "rgb(var(--connections-blue))",
         "connections-purple": "rgb(var(--connections-purple))",
         base: "rgb(var(--background-start-rgb))",
+        card: "var(--background-card)",
         border: "rgb(var(--border-rgb))",
       },
       borderColor: {

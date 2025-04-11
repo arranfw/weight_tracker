@@ -55,15 +55,13 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-card p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">Weight History</h2>
       <h3 className="text-xl font-semibold mb-4">
         Loss rate: {slope.toFixed(2)} {preferredUnit}/day
       </h3>
       {weightRecords.length === 0 ? (
-        <p className="text-gray-500">
-          No weight records yet. Add your first record to see the chart.
-        </p>
+        <p>No weight records yet. Add your first record to see the chart.</p>
       ) : (
         <ResponsiveContainer width="100%" height={320}>
           <LineChart

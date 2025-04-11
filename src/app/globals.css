@@ -29,12 +29,14 @@
 
 :root {
   --background: #ffffff;
+  --background-card: var(--color-gray-200);
   --foreground: #171717;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
+    --background-card: var(--color-gray-800);
     --foreground: #ededed;
   }
 }

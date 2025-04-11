@@ -55,7 +55,7 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
   };
 
   return (
-    <div className="bg-card p-6 rounded-lg shadow-md">
+    <div className="bg-card p-6 rounded-lg shadow-md text-white">
       <h2 className="text-xl font-semibold mb-4">Weight History</h2>
       <h3 className="text-xl font-semibold mb-4">
         Loss rate: {slope.toFixed(2)} {preferredUnit}/day
@@ -66,7 +66,7 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
         <ResponsiveContainer width="100%" height={320}>
           <LineChart
             data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            margin={{ top: 20, right: 30, left: 30, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis
@@ -76,12 +76,8 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
               tickFormatter={(value) => formatDate(new Date(value))}
             />
             <YAxis
-              tickFormatter={(value) => `${value.toFixed(2)} ${preferredUnit}`}
-              label={{
-                value: `Weight (${preferredUnit})`,
-                angle: -90,
-                position: "left",
-              }}
+              dataKey="weight"
+              tickFormatter={(value) => `${value} ${preferredUnit}`}
               domain={["dataMin - 5", "dataMax + 5"]}
             />
             <Tooltip

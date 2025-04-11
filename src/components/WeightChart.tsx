@@ -8,8 +8,8 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ErrorBar,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 import { useWeightUnit } from "@/contexts/WeightUnitContext";
 import { convertWeight } from "@/utils/weightConversion";
@@ -20,35 +20,46 @@ interface WeightChartProps {
   weightRecords: WeightRecord[];
 }
 
-interface DailyWeightStats {
-  date: Date;
-  avg: number;
-  min: number;
-  max: number;
-  count: number;
-  recordIds: string[];
+export function calculateWeightInFuture(
+  slope: number,
+  currentWeight: number,
+  daysFromNow: number,
+): number {
+  return currentWeight + slope * daysFromNow;
 }
 
 export default function WeightChart({ weightRecords }: WeightChartProps) {
   const { preferredUnit } = useWeightUnit();
 
-  const groupedData = groupWeightRecordsByDate(weightRecords, preferredUnit);
-
-  const sortedGroupedData = [...groupedData].sort(
-    (a, b) => a.date.getTime() - b.date.getTime(),
-  );
-
-  const chartData = sortedGroupedData.map((day) => ({
-    date: formatDate(day.date),
-    avg: day.avg,
-    min: day.min,
-    max: day.max,
-    errorX: day.max - day.min,
+  const chartData = weightRecords.map((record) => ({
+    date: record.date.getTime(),
+    weight:
+      record.unit !== preferredUnit
+        ? convertWeight(record.weight, record.unit || "kg", preferredUnit)
+        : record.weight,
   }));
+
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+  const firstRecord = weightRecords.at(-1)!;
+  // biome-ignore lint/style/noNonNullAssertion: <explanation>
+  const lastRecord = weightRecords.at(0)!;
+
+  const slope =
+    (lastRecord.weight - firstRecord.weight) /
+    (lastRecord.date.getTime() / 86400000 -
+      firstRecord.date.getTime() / 86400000);
+
+  const extendedTrendline = {
+    x: lastRecord.date.getTime() + 86400000 * 7,
+    y: calculateWeightInFuture(slope, lastRecord.weight, 7),
+  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">Weight History</h2>
+      <h3 className="text-xl font-semibold mb-4">
+        Loss rate: {slope.toFixed(2)} {preferredUnit}/day
+      </h3>
       {weightRecords.length === 0 ? (
         <p className="text-gray-500">
           No weight records yet. Add your first record to see the chart.
@@ -60,16 +71,20 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
+            <XAxis
+              dataKey="date"
+              type="number"
+              domain={["dataMin ", `dataMax  + ${86400000 * 7}`]}
+              tickFormatter={(value) => formatDate(new Date(value))}
+            />
             <YAxis
-              allowDecimals={false}
-              tickFormatter={(value) => value.toFixed(1)}
-              domain={["dataMin", "dataMax"]}
+              tickFormatter={(value) => `${value.toFixed(2)} ${preferredUnit}`}
               label={{
                 value: `Weight (${preferredUnit})`,
                 angle: -90,
                 position: "left",
               }}
+              domain={["dataMin - 5", "dataMax + 5"]}
             />
             <Tooltip
               formatter={(value: number, name) => [
@@ -80,64 +95,28 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
             <Legend />
             <Line
               type="monotone"
-              dataKey="avg"
+              dataKey="weight"
               name={`Weight (${preferredUnit})`}
               stroke="rgb(79, 70, 229)"
               fill="rgba(79, 70, 229, 0.5)"
-            >
-              <ErrorBar
-                dataKey="errorX"
-                width={4}
-                stroke="rgba(79, 70, 229, 0.7)"
-              />
-            </Line>
+            />
+            <ReferenceLine
+              stroke="green"
+              strokeDasharray="3 3"
+              segment={[
+                {
+                  x: firstRecord.date.getTime(),
+                  y: firstRecord.weight,
+                },
+                {
+                  x: extendedTrendline.x,
+                  y: extendedTrendline.y,
+                },
+              ]}
+            />
           </LineChart>
         </ResponsiveContainer>
       )}
     </div>
   );
-}
-
-function groupWeightRecordsByDate(
-  records: WeightRecord[],
-  preferredUnit: string,
-): DailyWeightStats[] {
-  const dateMap = new Map<string, WeightRecord[]>();
-
-  for (const record of records) {
-    const date = new Date(record.date);
-    const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-
-    if (!dateMap.has(dateKey)) {
-      dateMap.set(dateKey, []);
-    }
-
-    dateMap.get(dateKey)?.push(record);
-  }
-
-  return Array.from(dateMap.entries()).map(([dateKey, dayRecords]) => {
-    const convertedWeights = dayRecords.map((record) => {
-      const recordUnit = record.unit || "kg";
-      return recordUnit !== preferredUnit
-        ? convertWeight(record.weight, recordUnit, preferredUnit)
-        : record.weight;
-    });
-
-    const min = Math.min(...convertedWeights);
-    const max = Math.max(...convertedWeights);
-    const sum = convertedWeights.reduce((acc, val) => acc + val, 0);
-    const avg = sum / convertedWeights.length;
-
-    const date = new Date(dayRecords[0].date);
-    date.setHours(12, 0, 0, 0);
-
-    return {
-      date,
-      min,
-      max,
-      avg,
-      count: dayRecords.length,
-      recordIds: dayRecords.map((record) => record.id),
-    };
-  });
 }

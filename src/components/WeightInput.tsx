@@ -91,6 +91,7 @@ export const WeightInput: React.FC<WeightInputProps> = ({ defaultValue }) => {
         <span className="absolute top-[55%] leading-[0] left-3/4 text-[24px] select-none">
           .
         </span>
+        <input type="text" name="weight" hidden value={value} />
       </div>
     </div>
   );

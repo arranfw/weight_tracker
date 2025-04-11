@@ -1,3 +1,5 @@
+# I vibe-coded this
+
 # Weight Tracker App
 
 A Next.js (App Router) application for tracking weight measurements with PostgreSQL database and Chart.js visualization.

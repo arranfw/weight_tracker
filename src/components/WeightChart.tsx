@@ -93,6 +93,8 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
               name={`Weight (${preferredUnit})`}
               stroke="rgb(79, 70, 229)"
               fill="rgba(79, 70, 229, 0.5)"
+              // @ts-ignore
+              dot={null}
             />
             <ReferenceLine
               stroke="green"

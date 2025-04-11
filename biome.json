@@ -23,7 +23,10 @@
         "useNumberNamespace": "off"
       },
       "correctness": {
-        "noUnusedImports": "error"
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "noUnusedLabels": "error",
+        "noUnusedFunctionParameters": "error"
       }
     }
   },

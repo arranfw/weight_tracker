@@ -1,7 +1,6 @@
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import VerificationInput from "react-verification-input";
 
 interface DigitBoxProps {
   onClick: () => void;
@@ -25,6 +24,22 @@ function AdjustmentButton({ onClick, type }: DigitBoxProps) {
   );
 }
 
+interface DigitProps {
+  digit: string;
+  adjustment: number;
+  onAdjustment: (adjustment: number) => void;
+}
+
+function Digit({ digit, adjustment, onAdjustment }: DigitProps) {
+  return (
+    <div className="flex flex-col items-center text-4xl">
+      <AdjustmentButton type="up" onClick={() => onAdjustment(adjustment)} />
+      {digit}
+      <AdjustmentButton type="down" onClick={() => onAdjustment(-adjustment)} />
+    </div>
+  );
+}
+
 interface WeightInputProps {
   defaultValue: string;
   placeholder?: string;
@@ -32,15 +47,9 @@ interface WeightInputProps {
   ariaLabel?: string;
 }
 
-export const WeightInput: React.FC<WeightInputProps> = ({
-  defaultValue,
-  placeholder,
-  className,
-  ariaLabel,
-}) => {
+export const WeightInput: React.FC<WeightInputProps> = ({ defaultValue }) => {
   const [_value, setValue] = useState("");
   const value = _value.replace(".", "").padStart(4, "0");
-  const numericValue = Number.parseFloat(Number.parseFloat(_value).toFixed(1));
 
   useEffect(() => {
     setValue(defaultValue);
@@ -58,35 +67,30 @@ export const WeightInput: React.FC<WeightInputProps> = ({
     <div className="flex w-full justify-center">
       <div className="flex flex-col items-center relative">
         <div className="flex gap-1">
-          <AdjustmentButton type="up" onClick={() => incrementDigit(1000)} />
-          <AdjustmentButton type="up" onClick={() => incrementDigit(100)} />
-          <AdjustmentButton type="up" onClick={() => incrementDigit(10)} />
-          <AdjustmentButton type="up" onClick={() => incrementDigit(1)} />
+          <Digit
+            adjustment={1000}
+            digit={value.replace(".", "")[0]}
+            onAdjustment={incrementDigit}
+          />
+          <Digit
+            adjustment={100}
+            digit={value.replace(".", "")[1]}
+            onAdjustment={incrementDigit}
+          />
+          <Digit
+            adjustment={10}
+            digit={value.replace(".", "")[2]}
+            onAdjustment={incrementDigit}
+          />
+          <Digit
+            adjustment={1}
+            digit={value.replace(".", "")[3]}
+            onAdjustment={incrementDigit}
+          />
         </div>
         <span className="absolute top-[55%] leading-[0] left-3/4 text-[24px] select-none">
           .
         </span>
-        <VerificationInput
-          autoFocus
-          length={4}
-          value={value.replace(".", "")}
-          onChange={setValue}
-          validChars="0123456789"
-          classNames={{
-            container: "border w-full! rounded",
-            character: "border-none! bg-transparent!",
-          }}
-          inputProps={{
-            name: "weight",
-          }}
-        />
-
-        <div className="flex gap-1">
-          <AdjustmentButton type="down" onClick={() => incrementDigit(-1000)} />
-          <AdjustmentButton type="down" onClick={() => incrementDigit(-100)} />
-          <AdjustmentButton type="down" onClick={() => incrementDigit(-10)} />
-          <AdjustmentButton type="down" onClick={() => incrementDigit(-1)} />
-        </div>
       </div>
     </div>
   );

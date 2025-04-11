@@ -3,7 +3,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { LocalDateTime } from "@js-joda/core";
 import { dateTimeToJsDate, parseISOToDateTime, now } from "@/utils/dateUtils";
 
 export async function getWeightRecords() {

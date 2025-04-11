@@ -21,6 +21,9 @@
       "recommended": true,
       "style": {
         "useNumberNamespace": "off"
+      },
+      "correctness": {
+        "noUnusedImports": "error"
       }
     }
   },

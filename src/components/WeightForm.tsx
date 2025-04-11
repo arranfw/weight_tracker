@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { addWeightRecord, getLatestWeightRecord } from "@/actions/weight";
 import { useWeightUnit } from "@/contexts/WeightUnitContext";
 import { convertWeight } from "@/utils/weightConversion";
-import { LocalDateTime } from "@js-joda/core";
 import { formatDateTimeForInput, now } from "@/utils/dateUtils";
 import { WeightInput } from "./WeightInput";
 

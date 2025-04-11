@@ -1,9 +1,4 @@
-import {
-  faCaretDown,
-  faCaretUp,
-  faChevronDown,
-  faChevronUp,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import VerificationInput from "react-verification-input";

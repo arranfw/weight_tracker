@@ -1,81 +1,81 @@
 "use client";
 
 import {
-	createContext,
-	useContext,
-	useState,
-	useEffect,
-	type ReactNode,
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
 } from "react";
 import {
-	getUserWeightUnitPreference,
-	updateUserWeightUnitPreference,
+  getUserWeightUnitPreference,
+  updateUserWeightUnitPreference,
 } from "@/actions/user";
 
 type WeightUnit = "kg" | "lbs";
 
 interface WeightUnitContextType {
-	preferredUnit: WeightUnit;
-	setPreferredUnit: (unit: WeightUnit) => Promise<void>;
-	isLoading: boolean;
+  preferredUnit: WeightUnit;
+  setPreferredUnit: (unit: WeightUnit) => Promise<void>;
+  isLoading: boolean;
 }
 
 const WeightUnitContext = createContext<WeightUnitContextType | undefined>(
-	undefined,
+  undefined,
 );
 
 export function useWeightUnit() {
-	const context = useContext(WeightUnitContext);
-	if (context === undefined) {
-		throw new Error("useWeightUnit must be used within a WeightUnitProvider");
-	}
-	return context;
+  const context = useContext(WeightUnitContext);
+  if (context === undefined) {
+    throw new Error("useWeightUnit must be used within a WeightUnitProvider");
+  }
+  return context;
 }
 
 interface WeightUnitProviderProps {
-	children: ReactNode;
+  children: ReactNode;
 }
 
 export function WeightUnitProvider({ children }: WeightUnitProviderProps) {
-	const [preferredUnit, setPreferredUnit] = useState<WeightUnit>("kg");
-	const [isLoading, setIsLoading] = useState(true);
+  const [preferredUnit, setPreferredUnit] = useState<WeightUnit>("kg");
+  const [isLoading, setIsLoading] = useState(true);
 
-	// Load user preference on initial render
-	useEffect(() => {
-		async function loadPreference() {
-			try {
-				const unit = await getUserWeightUnitPreference();
-				setPreferredUnit(unit);
-			} catch (error) {
-				console.error("Failed to load weight unit preference:", error);
-			} finally {
-				setIsLoading(false);
-			}
-		}
+  // Load user preference on initial render
+  useEffect(() => {
+    async function loadPreference() {
+      try {
+        const unit = await getUserWeightUnitPreference();
+        setPreferredUnit(unit);
+      } catch (error) {
+        console.error("Failed to load weight unit preference:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
 
-		loadPreference();
-	}, []);
+    loadPreference();
+  }, []);
 
-	// Update preference in the database and state
-	async function handleSetPreferredUnit(unit: WeightUnit) {
-		try {
-			await updateUserWeightUnitPreference(unit);
-			setPreferredUnit(unit);
-		} catch (error) {
-			console.error("Failed to update weight unit preference:", error);
-			throw error;
-		}
-	}
+  // Update preference in the database and state
+  async function handleSetPreferredUnit(unit: WeightUnit) {
+    try {
+      await updateUserWeightUnitPreference(unit);
+      setPreferredUnit(unit);
+    } catch (error) {
+      console.error("Failed to update weight unit preference:", error);
+      throw error;
+    }
+  }
 
-	const value = {
-		preferredUnit,
-		setPreferredUnit: handleSetPreferredUnit,
-		isLoading,
-	};
+  const value = {
+    preferredUnit,
+    setPreferredUnit: handleSetPreferredUnit,
+    isLoading,
+  };
 
-	return (
-		<WeightUnitContext.Provider value={value}>
-			{children}
-		</WeightUnitContext.Provider>
-	);
+  return (
+    <WeightUnitContext.Provider value={value}>
+      {children}
+    </WeightUnitContext.Provider>
+  );
 }

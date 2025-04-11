@@ -2,35 +2,35 @@
  * Convert weight from kg to lbs
  */
 export function kgToLbs(kg: number): number {
-	return kg * 2.20462;
+  return kg * 2.20462;
 }
 
 /**
  * Convert weight from lbs to kg
  */
 export function lbsToKg(lbs: number): number {
-	return lbs / 2.20462;
+  return lbs / 2.20462;
 }
 
 /**
  * Convert weight between units
  */
 export function convertWeight(
-	weight: number,
-	fromUnit: string,
-	toUnit: string,
+  weight: number,
+  fromUnit: string,
+  toUnit: string,
 ): number {
-	if (fromUnit === toUnit) {
-		return weight;
-	}
+  if (fromUnit === toUnit) {
+    return weight;
+  }
 
-	if (fromUnit === "kg" && toUnit === "lbs") {
-		return kgToLbs(weight);
-	}
+  if (fromUnit === "kg" && toUnit === "lbs") {
+    return kgToLbs(weight);
+  }
 
-	if (fromUnit === "lbs" && toUnit === "kg") {
-		return lbsToKg(weight);
-	}
+  if (fromUnit === "lbs" && toUnit === "kg") {
+    return lbsToKg(weight);
+  }
 
-	return weight;
+  return weight;
 }

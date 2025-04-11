@@ -1,126 +1,148 @@
 "use client";
 
 import {
-	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
-	Title,
-	Tooltip,
-	Legend,
-	type ChartOptions,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ErrorBar,
+  ResponsiveContainer,
+} from "recharts";
 import { useWeightUnit } from "@/contexts/WeightUnitContext";
 import { convertWeight } from "@/utils/weightConversion";
-import { formatDate, formatDateTime } from "@/utils/dateUtils";
+import { formatDate } from "@/utils/dateUtils";
 import type { WeightRecord } from "@prisma/client";
 
-// Register ChartJS components
-ChartJS.register(
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
-	Title,
-	Tooltip,
-	Legend,
-);
-
 interface WeightChartProps {
-	weightRecords: WeightRecord[];
+  weightRecords: WeightRecord[];
+}
+
+interface DailyWeightStats {
+  date: Date;
+  avg: number;
+  min: number;
+  max: number;
+  count: number;
+  recordIds: string[];
 }
 
 export default function WeightChart({ weightRecords }: WeightChartProps) {
-	const { preferredUnit } = useWeightUnit();
+  const { preferredUnit } = useWeightUnit();
 
-	// Sort records by date
-	const sortedRecords = [...weightRecords].sort((a, b) => {
-		return new Date(a.date).getTime() - new Date(b.date).getTime();
-	});
+  const groupedData = groupWeightRecordsByDate(weightRecords, preferredUnit);
 
-	// Convert weights to preferred unit
-	const convertedWeights = sortedRecords.map((record) => {
-		const recordUnit = record.unit || "kg";
-		if (recordUnit !== preferredUnit) {
-			return convertWeight(record.weight, recordUnit, preferredUnit);
-		}
-		return record.weight;
-	});
+  const sortedGroupedData = [...groupedData].sort(
+    (a, b) => a.date.getTime() - b.date.getTime(),
+  );
 
-	const labels = sortedRecords.map((record) =>
-		formatDate(new Date(record.date)),
-	);
+  const chartData = sortedGroupedData.map((day) => ({
+    date: formatDate(day.date),
+    avg: day.avg,
+    min: day.min,
+    max: day.max,
+    errorMin: day.min,
+    errorMax: day.max,
+  }));
 
-	const chartData = {
-		labels,
-		datasets: [
-			{
-				label: `Weight (${preferredUnit})`,
-				data: convertedWeights,
-				borderColor: "rgb(79, 70, 229)",
-				backgroundColor: "rgba(79, 70, 229, 0.5)",
-				tension: 0.1,
-			},
-		],
-	};
+  console.log("😣", chartData);
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Weight History</h2>
+      {weightRecords.length === 0 ? (
+        <p className="text-gray-500">
+          No weight records yet. Add your first record to see the chart.
+        </p>
+      ) : (
+        <ResponsiveContainer width="100%" height={320}>
+          <LineChart
+            data={chartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis
+              label={{
+                value: `Weight (${preferredUnit})`,
+                angle: -90,
+                position: "insideLeft",
+              }}
+            />
+            <Tooltip
+              formatter={(value: number, name) => [
+                `${value.toFixed(1)} ${preferredUnit}`,
+                name,
+              ]}
+            />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="avg"
+              name={`Weight (${preferredUnit})`}
+              stroke="rgb(79, 70, 229)"
+              fill="rgba(79, 70, 229, 0.5)"
+            >
+              <ErrorBar
+                dataKey="avg"
+                width={4}
+                data={chartData.map((d) => ({
+                  x: d.date,
+                  y: d.avg,
+                  errorMin: d.errorMin,
+                  errorMax: d.errorMax,
+                }))}
+                stroke="rgba(79, 70, 229, 0.7)"
+              />
+            </Line>
+          </LineChart>
+        </ResponsiveContainer>
+      )}
+    </div>
+  );
+}
 
-	const options: ChartOptions<"line"> = {
-		responsive: true,
-		plugins: {
-			legend: {
-				position: "top" as const,
-			},
-			title: {
-				display: true,
-				text: "Weight History",
-			},
-			tooltip: {
-				callbacks: {
-					label: (context) =>
-						`Weight: ${context.parsed.y.toFixed(1)} ${preferredUnit}`,
-					afterLabel: (context) => {
-						const recordIndex = context.dataIndex;
-						const record = sortedRecords[recordIndex];
-						const tooltipInfo = [];
+function groupWeightRecordsByDate(
+  records: WeightRecord[],
+  preferredUnit: string,
+): DailyWeightStats[] {
+  const dateMap = new Map<string, WeightRecord[]>();
 
-						// Add date and time
-						tooltipInfo.push(`Date: ${formatDateTime(new Date(record.date))}`);
+  for (const record of records) {
+    const date = new Date(record.date);
+    const dateKey = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 
-						// Add notes if available
-						if (record.notes) {
-							tooltipInfo.push(`Notes: ${record.notes}`);
-						}
+    if (!dateMap.has(dateKey)) {
+      dateMap.set(dateKey, []);
+    }
 
-						return tooltipInfo.join("\n");
-					},
-				},
-			},
-		},
-		scales: {
-			y: {
-				title: {
-					display: true,
-					text: `Weight (${preferredUnit})`,
-				},
-				min: Math.floor(Math.min(...convertedWeights) * 0.95),
-			},
-		},
-	};
+    dateMap.get(dateKey)?.push(record);
+  }
 
-	return (
-		<div className="bg-white p-6 rounded-lg shadow-md">
-			<h2 className="text-xl font-semibold mb-4">Weight History</h2>
-			{weightRecords.length === 0 ? (
-				<p className="text-gray-500">
-					No weight records yet. Add your first record to see the chart.
-				</p>
-			) : (
-				<div className="h-80">
-					<Line data={chartData} options={options} />
-				</div>
-			)}
-		</div>
-	);
+  return Array.from(dateMap.entries()).map(([dateKey, dayRecords]) => {
+    const convertedWeights = dayRecords.map((record) => {
+      const recordUnit = record.unit || "kg";
+      return recordUnit !== preferredUnit
+        ? convertWeight(record.weight, recordUnit, preferredUnit)
+        : record.weight;
+    });
+
+    const min = Math.min(...convertedWeights);
+    const max = Math.max(...convertedWeights);
+    const sum = convertedWeights.reduce((acc, val) => acc + val, 0);
+    const avg = sum / convertedWeights.length;
+
+    const date = new Date(dayRecords[0].date);
+    date.setHours(12, 0, 0, 0);
+
+    return {
+      date,
+      min,
+      max,
+      avg,
+      count: dayRecords.length,
+      recordIds: dayRecords.map((record) => record.id),
+    };
+  });
 }

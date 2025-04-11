@@ -1,9 +1,9 @@
 import {
-	LocalDateTime,
-	ZonedDateTime,
-	ZoneId,
-	DateTimeFormatter,
-	Instant,
+  LocalDateTime,
+  ZonedDateTime,
+  ZoneId,
+  DateTimeFormatter,
+  Instant,
 } from "@js-joda/core";
 import "@js-joda/timezone";
 import { Locale } from "@js-joda/locale_en";
@@ -18,19 +18,19 @@ const US_LOCALE = Locale.US;
  * @returns Formatted date string
  */
 export function formatDate(date: Date, pattern = "MMM d"): string {
-	// Convert JavaScript date to js-joda Instant
-	const instant = Instant.ofEpochMilli(date.getTime());
+  // Convert JavaScript date to js-joda Instant
+  const instant = Instant.ofEpochMilli(date.getTime());
 
-	// Convert to ZonedDateTime in the system default timezone
-	const zonedDateTime = ZonedDateTime.ofInstant(
-		instant,
-		ZoneId.systemDefault(),
-	);
+  // Convert to ZonedDateTime in the system default timezone
+  const zonedDateTime = ZonedDateTime.ofInstant(
+    instant,
+    ZoneId.systemDefault(),
+  );
 
-	// Format with the provided pattern
-	return zonedDateTime.format(
-		DateTimeFormatter.ofPattern(pattern).withLocale(US_LOCALE),
-	);
+  // Format with the provided pattern
+  return zonedDateTime.format(
+    DateTimeFormatter.ofPattern(pattern).withLocale(US_LOCALE),
+  );
 }
 
 /**
@@ -39,7 +39,7 @@ export function formatDate(date: Date, pattern = "MMM d"): string {
  * @returns Formatted date and time string
  */
 export function formatDateTime(date: Date): string {
-	return formatDate(date, "MMM d, yyyy h:mm a");
+  return formatDate(date, "MMM d, yyyy h:mm a");
 }
 
 /**
@@ -48,9 +48,9 @@ export function formatDateTime(date: Date): string {
  * @returns Formatted string in the format required by datetime-local input
  */
 export function formatDateTimeForInput(localDateTime: LocalDateTime): string {
-	return localDateTime.format(
-		DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"),
-	);
+  return localDateTime.format(
+    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"),
+  );
 }
 
 /**
@@ -59,12 +59,12 @@ export function formatDateTimeForInput(localDateTime: LocalDateTime): string {
  * @returns JavaScript Date object
  */
 export function dateTimeToJsDate(localDateTime: LocalDateTime): Date {
-	// First convert to a ZonedDateTime in the system default time zone
-	const zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
-	// Then convert to an instant (point in time)
-	const instant = zonedDateTime.toInstant();
-	// Finally convert to milliseconds since epoch and create a JavaScript Date
-	return new Date(instant.toEpochMilli());
+  // First convert to a ZonedDateTime in the system default time zone
+  const zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+  // Then convert to an instant (point in time)
+  const instant = zonedDateTime.toInstant();
+  // Finally convert to milliseconds since epoch and create a JavaScript Date
+  return new Date(instant.toEpochMilli());
 }
 
 /**
@@ -73,15 +73,15 @@ export function dateTimeToJsDate(localDateTime: LocalDateTime): Date {
  * @returns js-joda LocalDateTime
  */
 export function jsDateToDateTime(date: Date): LocalDateTime {
-	// Convert to Instant first
-	const instant = Instant.ofEpochMilli(date.getTime());
-	// Then to ZonedDateTime in the default time zone
-	const zonedDateTime = ZonedDateTime.ofInstant(
-		instant,
-		ZoneId.systemDefault(),
-	);
-	// Finally extract the LocalDateTime component
-	return zonedDateTime.toLocalDateTime();
+  // Convert to Instant first
+  const instant = Instant.ofEpochMilli(date.getTime());
+  // Then to ZonedDateTime in the default time zone
+  const zonedDateTime = ZonedDateTime.ofInstant(
+    instant,
+    ZoneId.systemDefault(),
+  );
+  // Finally extract the LocalDateTime component
+  return zonedDateTime.toLocalDateTime();
 }
 
 /**
@@ -90,18 +90,18 @@ export function jsDateToDateTime(date: Date): LocalDateTime {
  * @returns js-joda LocalDateTime
  */
 export function parseISOToDateTime(dateStr: string): LocalDateTime {
-	// For datetime-local input values
-	if (dateStr.includes("T")) {
-		return LocalDateTime.parse(
-			dateStr,
-			DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"),
-		);
-	}
-	// For date-only inputs
-	return LocalDateTime.parse(
-		dateStr,
-		DateTimeFormatter.ofPattern("yyyy-MM-dd"),
-	);
+  // For datetime-local input values
+  if (dateStr.includes("T")) {
+    return LocalDateTime.parse(
+      dateStr,
+      DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"),
+    );
+  }
+  // For date-only inputs
+  return LocalDateTime.parse(
+    dateStr,
+    DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+  );
 }
 
 /**
@@ -109,5 +109,5 @@ export function parseISOToDateTime(dateStr: string): LocalDateTime {
  * @returns Current LocalDateTime
  */
 export function now(): LocalDateTime {
-	return LocalDateTime.now();
+  return LocalDateTime.now();
 }

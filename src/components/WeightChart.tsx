@@ -43,11 +43,9 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
     avg: day.avg,
     min: day.min,
     max: day.max,
-    errorMin: day.min,
-    errorMax: day.max,
+    errorX: day.max - day.min,
   }));
 
-  console.log("😣", chartData);
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">Weight History</h2>
@@ -64,10 +62,13 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis
+              allowDecimals={false}
+              tickFormatter={(value) => value.toFixed(1)}
+              domain={["dataMin", "dataMax"]}
               label={{
                 value: `Weight (${preferredUnit})`,
                 angle: -90,
-                position: "insideLeft",
+                position: "left",
               }}
             />
             <Tooltip
@@ -85,14 +86,8 @@ export default function WeightChart({ weightRecords }: WeightChartProps) {
               fill="rgba(79, 70, 229, 0.5)"
             >
               <ErrorBar
-                dataKey="avg"
+                dataKey="errorX"
                 width={4}
-                data={chartData.map((d) => ({
-                  x: d.date,
-                  y: d.avg,
-                  errorMin: d.errorMin,
-                  errorMax: d.errorMax,
-                }))}
                 stroke="rgba(79, 70, 229, 0.7)"
               />
             </Line>
